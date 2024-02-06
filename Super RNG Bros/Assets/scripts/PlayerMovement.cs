@@ -9,15 +9,18 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     public LayerMask groundLayer;
     
-    private float horizontal;
-    private float speed = 8f;
-    private float jumpingpower = 16f;
-    private bool isFacingRight = true;
+    public float horizontal;
+    public float speed = 8f;
+    public float drag = 0f;
+    public float jumpingpower = 10f;
+    
+    public bool isFacingRight = true;
 
     // Update is called once per frame
     void Update()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);   
+        Debug.Log(rb.velocity);
+        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
         if(!isFacingRight && horizontal > 0f)
         {
@@ -30,16 +33,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void Jump(InputAction.CallbackContext context)
-    {
-        
+    { 
         if(context.performed && isGrounded())
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingpower);
-        }
-        
-        if(context.canceled && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+            rb.velocity = new Vector2(rb.velocity.x, jumpingpower * rb.gravityScale);
         }
     }
 
@@ -58,6 +55,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
-        horizontal = context.ReadValue<Vector2>().x;
+        if(isGrounded())
+        {
+            horizontal = context.ReadValue<Vector2>().x;
+        }
     }
 }
