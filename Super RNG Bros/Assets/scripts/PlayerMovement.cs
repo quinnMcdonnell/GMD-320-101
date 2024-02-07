@@ -18,8 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        Debug.Log(rb.velocity);
+    {   
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
         if(!isFacingRight && horizontal > 0f)
@@ -36,7 +35,12 @@ public class PlayerMovement : MonoBehaviour
     { 
         if(context.performed && isGrounded())
         {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingpower * rb.gravityScale);
+            rb.velocity = new Vector2(0, jumpingpower / rb.gravityScale);
+        }
+
+        if(context.canceled && rb.velocity.y > 0f)
+        {
+            rb.velocity = new Vector2(0, jumpingpower / rb.gravityScale * 0.5f);
         }
     }
 
@@ -55,9 +59,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Move(InputAction.CallbackContext context)
     {
-        if(isGrounded())
-        {
-            horizontal = context.ReadValue<Vector2>().x;
-        }
+          horizontal = context.ReadValue<Vector2>().x;
     }
 }
