@@ -2069,8 +2069,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5c4f562e3df045489833cdca77b5e08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TimeLeft: 3
+  TimeLeft: 999
   timerTxt: {fileID: 625943037}
+  pm: {fileID: 765555904}
 --- !u!114 &625943037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2240,8 +2241,8 @@ MonoBehaviour:
     m_Bits: 64
   horizontal: 0
   speed: 8
-  drag: -3
-  jumpingpower: 10
+  jumpingpower: 30
+  auto: 0
   isFacingRight: 1
 --- !u!114 &765555905
 MonoBehaviour:

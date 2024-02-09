@@ -10,6 +10,7 @@ public class timer : MonoBehaviour
 {
     public float TimeLeft;
     public Text timerTxt;
+    public PlayerMovement pm;
 
     private float originalTime;
     
@@ -29,7 +30,8 @@ public class timer : MonoBehaviour
             }
             else
             {
-            TimeLeft = originalTime;
+                pm.RNG();
+                TimeLeft = originalTime;
             }
     }
 

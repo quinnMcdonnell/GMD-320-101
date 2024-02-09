@@ -1,7 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
+using Debug = UnityEngine.Debug;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,15 +17,36 @@ public class PlayerMovement : MonoBehaviour
     
     public float horizontal;
     public float speed = 8f;
-    public float drag = 0f;
-    public float jumpingpower = 10f;
-    
-    public bool isFacingRight = true;
+    public float jumpingpower = 100f;
 
-    // Update is called once per frame
+    //Random Stuff
+    public float auto = 0f;
+
+    public bool isFacingRight = true;
+    private Vector2 saved;
+
+    void Awake()
+    {
+        //RNG();
+    }
+    
+    
     void Update()
     {   
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        
+        if(isGrounded())
+        {
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        }
+
+        float absolute = -rb.velocity.y;
+
+        var ratio = Mathf.Clamp01(absolute / 3);
+
+        const float minDrag = 0f;
+        const float maxDrag = 1f;
+
+        rb.drag = Mathf.Lerp(minDrag, maxDrag, ratio);
 
         if(!isFacingRight && horizontal > 0f)
         {
@@ -33,15 +60,31 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(InputAction.CallbackContext context)
     { 
-        if(context.performed && isGrounded())
+        if(rb.gravityScale > 0)
         {
-            rb.velocity = new Vector2(0, jumpingpower / rb.gravityScale);
-        }
+            if (context.performed && isGrounded())
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale);
+            }
 
-        if(context.canceled && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(0, jumpingpower / rb.gravityScale * 0.5f);
+            if (context.canceled && rb.velocity.y > 0f)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale * 0.5f);
+            }
+        } else if(rb.gravityScale < 0)
+            {
+            if (context.performed && isGrounded())
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale);
+            }
+
+            if (context.canceled && rb.velocity.y > 0f)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale * 0.5f);
+            }
         }
+        
+        
     }
 
     private bool isGrounded()
@@ -60,5 +103,45 @@ public class PlayerMovement : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
           horizontal = context.ReadValue<Vector2>().x;
+    }
+
+    public void RNG()
+    {
+        
+        speed = Generator();
+        jumpingpower = Generator();
+
+        if(Squares(5))
+        {
+            rb.gravityScale = -1;
+            groundCheck.localPosition = new Vector3(0.0f,0.5f,0.0f);
+        } else
+        {
+            rb.gravityScale = 1;
+            groundCheck.localPosition = new Vector3(0.0f, -0.5f, 0.0f);
+        }
+    }
+
+    private float Generator()
+    {
+        int RNG = Random.Range(2, 20);
+        return (float)RNG;
+    }
+
+    private bool Squares(int modular) //if six then RNG % 6 == true; out of 20
+    {
+        bool returnal;
+        int RNG = Random.Range(0, 20);
+
+        if (RNG % modular == 0)
+        {
+            returnal = true;
+        }
+        else
+        {
+            returnal = false;
+        }
+
+        return returnal;
     }
 }
