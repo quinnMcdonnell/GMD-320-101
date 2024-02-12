@@ -27,26 +27,16 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
-        //RNG();
+        RNG();
     }
-    
-    
+
+
     void Update()
-    {   
-        
-        if(isGrounded())
-        {
+    {
+       // if (isGrounded())
+       // {
             rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
-        }
-
-        float absolute = -rb.velocity.y;
-
-        var ratio = Mathf.Clamp01(absolute / 3);
-
-        const float minDrag = 0f;
-        const float maxDrag = 1f;
-
-        rb.drag = Mathf.Lerp(minDrag, maxDrag, ratio);
+      //  }
 
         if(!isFacingRight && horizontal > 0f)
         {
@@ -64,23 +54,14 @@ public class PlayerMovement : MonoBehaviour
         {
             if (context.performed && isGrounded())
             {
+                
                 rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale);
-            }
-
-            if (context.canceled && rb.velocity.y > 0f)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale * 0.5f);
             }
         } else if(rb.gravityScale < 0)
             {
             if (context.performed && isGrounded())
             {
                 rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale);
-            }
-
-            if (context.canceled && rb.velocity.y > 0f)
-            {
-                rb.velocity = new Vector2(rb.velocity.x, jumpingpower / rb.gravityScale * 0.5f);
             }
         }
         
@@ -109,9 +90,30 @@ public class PlayerMovement : MonoBehaviour
     {
         
         speed = Generator();
-        jumpingpower = Generator();
 
-        if(Squares(5))
+        if(speed < 10f)
+        {
+            jumpingpower = Generator();
+            if(jumpingpower < 10f)
+            {
+                jumpingpower *= 2f;
+            }
+        }
+        else
+        {
+            jumpingpower = Generator();
+            if (jumpingpower > 10f)
+            {
+                if(!Squares(5))
+                {
+                    jumpingpower *= 0.75f;
+                }
+            }
+        }
+
+        
+
+        if(Squares(4))
         {
             rb.gravityScale = -1;
             groundCheck.localPosition = new Vector3(0.0f,0.5f,0.0f);
@@ -119,6 +121,11 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.gravityScale = 1;
             groundCheck.localPosition = new Vector3(0.0f, -0.5f, 0.0f);
+        }
+
+        if(Squares(5) && jumpingpower > 7f)
+        {
+            rb.gravityScale *= 0.5f;
         }
     }
 
