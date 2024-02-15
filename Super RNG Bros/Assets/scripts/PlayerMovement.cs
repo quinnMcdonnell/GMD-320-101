@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 using Debug = UnityEngine.Debug;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -84,6 +85,25 @@ public class PlayerMovement : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
           horizontal = context.ReadValue<Vector2>().x;
+    }
+
+    public void Exit(InputAction.CallbackContext context)
+    {
+        if(context.performed)
+        {
+            Application.Quit();
+        }
+        
+    }
+
+    public void Restart(InputAction.CallbackContext context)
+    {
+
+        if(context.performed)
+        {
+            SceneManager.LoadScene(1);
+        }
+        
     }
 
     public void RNG()
