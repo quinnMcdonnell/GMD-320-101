@@ -28,7 +28,8 @@ public class curves : MonoBehaviour
         for (int i = 1; i < numPoints + 1; i++)
         {
             float t = i / (float)numPoints;
-            positions[i - 1] = ContinuousZero(t, point0.position, point1.position, point2.position, point3.position);
+            positions[i - 1] = cubicBezierCurve(t, point0.position, point1.position, point2.position, point3.position);
+            
         }
 
         lineRenderer.SetPositions(positions);
@@ -62,10 +63,10 @@ public class curves : MonoBehaviour
         float ttt = tt * t;
 
 
-        Vector3 p = 3 * uu * p0;
-        p += 6 * u * 1 * p1;
-        p += 6 * t * p2;
-        p += 3 * tt * p3;
+        Vector3 p = 2 * u * p0;
+        p += p1;
+        p += p2;
+        p += 2 * t * p3;
 
 
         return p;

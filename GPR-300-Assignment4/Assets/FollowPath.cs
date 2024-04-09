@@ -10,7 +10,6 @@ public class FollowPath : MonoBehaviour
 
     private int i = 0;
     private float u = 0.0f;
-    private int direction = 1;
 
     private Vector3 GetCurve(curves c)
     {
@@ -42,8 +41,7 @@ public class FollowPath : MonoBehaviour
         transform.position = GetCurve(current_curve);
         
         // always last?
-        u += dt * direction;
-        Debug.Log(u);
+        u += dt;
     }
 
 }
